@@ -67,5 +67,5 @@ if pat_file and classlist:
             with col1:
                 st.success(f'File {files.name} looks good to go')
             with col2:
-                st.download_button(label = files.name, data = result.to_csv().encode('utf-8'), file_name=files.name, use_container_width=True)
+                st.download_button(label = files.name, data = result.to_excel().encode('utf-8'), file_name=files.name, use_container_width=True)
         st.write('---')
