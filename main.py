@@ -72,7 +72,7 @@ if pat_file and classlist:
             with col2:
                 with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
                     result.to_excel(writer, sheet_name='Sheet1')
-                    writer.save()
+                    writer.close()
                     st.download_button(
                         label=files.name,
                         data=buffer,
