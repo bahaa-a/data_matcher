@@ -1,9 +1,12 @@
 import streamlit as st
 import pandas as pd
 from difflib import SequenceMatcher
+import io
 
 st.set_page_config(page_title='Data Matcher', page_icon=':computer:', layout='wide')
 st.title("Assessment Data Matcher")
+
+buffer = io.BytesIO()
 
 def find_best_match(name, name_list):
     best_score = 0
@@ -35,7 +38,7 @@ def per_assessment(pat_file, classlist):
             assessment_df.loc[i, 'DOB'] = student_info['Birth Date']
             assessment_df.loc[i, 'Gender'] = student_info['Gender']
         else:
-            listo.append(f'NAME: {student_name}, DOB: {row["DOB"]}, GENDER: {row["Gender"]}')
+            listo.append(f'ROW: {i + 13}, FIRST NAME: {student_name.split()[0]}, LAST NAME: {student_name.split()[1]}, DOB: {row["DOB"]}, GENDER: {row["Gender"]}')
     if len(listo) == 0:
         return assessment_df
     return listo
@@ -55,7 +58,7 @@ classlist = st.file_uploader('Upload Classlist here', type=None, accept_multiple
 st.write('---')
 
 if pat_file and classlist:
-    for files in pat_file:
+    for files in sorted(pat_file, key= lambda a:a.name):
         result = per_assessment(files, classlist)
         col1, col2, = st.columns(2)
         if type(result) == list:
@@ -67,5 +70,13 @@ if pat_file and classlist:
             with col1:
                 st.success(f'File {files.name} looks good to go')
             with col2:
-                st.download_button(label = files.name, data = result.to_csv().encode('utf-8'), file_name=files.name, use_container_width=True)
+                with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
+                    result.to_excel(writer, sheet_name='Sheet1')
+                    writer.save()
+                    st.download_button(
+                        label=files.name,
+                        data=buffer,
+                        file_name=files.name,
+                        mime="application/vnd.ms-excel")
+                #st.download_button(label = files.name, data = result.to_csv().encode('utf-8'), file_name=files.name, use_container_width=True)
         st.write('---')
