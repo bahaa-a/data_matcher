@@ -104,4 +104,3 @@ if submitted and classlist:
                         file_name=files.name,
                         mime="application/vnd.ms-excel")
             st.write('---')
-        st.write('---')
