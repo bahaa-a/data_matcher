@@ -92,11 +92,11 @@ if submitted and classlist:
             with col2:
                 result[0].to_excel('temp_ppts/output.xlsx', index=False, header=None)
                 result[1].to_excel('temp_ppts/output2.xlsx', index=False, header=None)
-                new_new = pd.read_excel('temp_ppts/output.xlsx', header=None)
-                new_new2 = pd.read_excel('temp_ppts/output2.xlsx', header=None)
-                final_yes = pd.concat([new_new2, new_new], axis=0)
+                dataframe_format = pd.read_excel('temp_ppts/output.xlsx', header=None)
+                dataframe_information = pd.read_excel('temp_ppts/output2.xlsx', header=None)
+                final_concat = pd.concat([dataframe_information, dataframe_format], axis=0)
                 with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
-                    final_yes.to_excel(writer, sheet_name='Sheet1', index=False)
+                    final_concat.to_excel(writer, sheet_name='Sheet1', index=False)
                     writer.close()
                     st.download_button(
                         label=files.name,
