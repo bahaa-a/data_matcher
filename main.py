@@ -38,7 +38,7 @@ def per_assessment(pat_file, classlist, header):
             student_info = students_df.loc[matching_names == matching_name].iloc[0]
             if assessment_df.loc[i, 'Given name'] != student_info['First Name']:
                 assessment_df.loc[i, 'Given name'] = student_info['First Name']
-                changes.append(f'ROW: {i+header + 2} CHANGED FIRST NAME')
+                changes.append(f'ROW: {i + header + 2} CHANGED FIRST NAME')
             if assessment_df.loc[i, 'Family name'] != student_info['Last Name']:
                 assessment_df.loc[i, 'Family name'] = student_info['Last Name']
                 changes.append(f'ROW: {i + header + 2} CHANGED LAST NAME')
@@ -53,11 +53,7 @@ def per_assessment(pat_file, classlist, header):
             listo.append(
                 f'ROW: {i + header + 2}, FIRST NAME: {student_name.split()[0]}, LAST NAME: {student_name.split()[1]}, DOB: {row["DOB"]}, GENDER: {row["Gender"]}')
     if len(listo) == 0:
-        print(original_df)
-        new_header = assessment_df.iloc[0]
-        df = assessment_df[1:]  # take the data less the header row
-        df.columns = new_header
-        return df, changes
+        return assessment_df, original_df, changes
     return listo
 
 
@@ -82,24 +78,30 @@ if submitted and classlist:
             result = per_assessment(files, classlist, 12)
 
         col1, col2, = st.columns(2)
-        if type(result) == list:
+        if type(result[0]) == list:
             with col1:
                 st.error(f'Issues with {files.name} detected')
             with col2:
-                st.write(result)
+                st.write(result[0])
         else:
             with col1:
-                if not result[1]:
+                if not result[2]:
                     st.success(f'File {files.name} looks good to go')
                 else:
-                    st.warning(result[1])
+                    st.warning(result[2])
             with col2:
+                result[0].to_excel('temp_ppts/output.xlsx', index=False, header=None)
+                result[1].to_excel('temp_ppts/output2.xlsx', index=False, header=None)
+                new_new = pd.read_excel('temp_ppts/output.xlsx', header=None)
+                new_new2 = pd.read_excel('temp_ppts/output2.xlsx', header=None)
+                final_yes = pd.concat([new_new2, new_new], axis=0)
                 with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
-                    result[0].to_excel(writer, sheet_name='Sheet1', index=False)
+                    final_yes.to_excel(writer, sheet_name='Sheet1', index=False)
                     writer.close()
                     st.download_button(
                         label=files.name,
                         data=buffer,
                         file_name=files.name,
                         mime="application/vnd.ms-excel")
+            st.write('---')
         st.write('---')
