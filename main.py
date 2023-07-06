@@ -48,7 +48,10 @@ def per_assessment(pat_file, classlist, header):
             if assessment_df.loc[i, 'Gender'] != student_info['Gender']:
                 changes.append(f'ROW: {i + header + 2} CHANGED GENDER')
                 assessment_df.loc[i, 'Gender'] = student_info['Gender']
-
+            if assessment_df.loc[i, 'Year level (current)'] != student_info['Year']:
+                changes.append(f'ROW: {i + header + 2} CHANGED YEAR')
+                assessment_df.loc[i, 'Year level (current)'] = student_info['Year']
+                assessment_df.loc[i, 'Year level (at time of test)'] = student_info['Year']
         else:
             listo.append(
                 f'ROW: {i + header + 2}, FIRST NAME: {student_name.split()[0]}, LAST NAME: {student_name.split()[1]}, DOB: {row["DOB"]}, GENDER: {row["Gender"]}')
