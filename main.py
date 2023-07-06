@@ -96,7 +96,7 @@ if submitted and classlist:
                 dataframe_information = pd.read_excel('temp_ppts/output2.xlsx', header=None)
                 final_concat = pd.concat([dataframe_information, dataframe_format], axis=0)
                 with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
-                    final_concat.to_excel(writer, sheet_name='Sheet1', index=False)
+                    final_concat.to_excel(writer, sheet_name='Sheet1', index=False, header=None)
                     writer.close()
                     st.download_button(
                         label=files.name,
