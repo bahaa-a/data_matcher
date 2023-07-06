@@ -78,7 +78,7 @@ if submitted and classlist:
             result = per_assessment(files, classlist, 12)
 
         col1, col2, = st.columns(2)
-        if type(result[0]) == list:
+        if len(result) == 1:
             with col1:
                 st.error(f'Issues with {files.name} detected')
             with col2:
@@ -86,7 +86,7 @@ if submitted and classlist:
         else:
             with col1:
                 if not result[2]:
-                    st.success(f'File {files.name} looks good to go')
+                    st.success(f'{files.name} good to go - no changes.')
                 else:
                     st.warning(result[2])
             with col2:
