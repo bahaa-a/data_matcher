@@ -62,10 +62,15 @@ def per_assessment(pat_file, classlist, header):
 
 
 pat_file = st.file_uploader('Upload PAT Files Here', type=None, accept_multiple_files=True, key=None,
-                            help=None,on_change=None, args=None,kwargs=None, disabled=False, label_visibility="visible")
+                                help=None,
+                                on_change=None, args=None,
+                                kwargs=None, disabled=False, label_visibility="visible")
 
-classlist = st.file_uploader('Upload Classlist here', type=None, accept_multiple_files=False, key=None,help=None,
-                             on_change=None, args=None,kwargs=None, disabled=False, label_visibility="visible")
+classlist = st.file_uploader('Upload Classlist here', type=None, accept_multiple_files=False, key=None,
+                                 help=None,
+                                 on_change=None, args=None,
+                                 kwargs=None, disabled=False, label_visibility="visible")
+
 
 if pat_file and classlist:
     for files in sorted(pat_file, key=lambda a: a.name):
@@ -75,7 +80,7 @@ if pat_file and classlist:
             result = per_assessment(files, classlist, 12)
 
         col1, col2, = st.columns(2)
-        if type(result) == list:
+        if len(result) == 1:
             with col1:
                 st.error(f'Issues with {files.name} detected')
             with col2:
