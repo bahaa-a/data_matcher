@@ -60,20 +60,14 @@ def per_assessment(pat_file, classlist, header):
     return listo
 
 
-with st.form("Main Form", clear_on_submit=False):
-    pat_file = st.file_uploader('Upload PAT Files Here', type=None, accept_multiple_files=True, key=None,
-                                help=None,
-                                on_change=None, args=None,
-                                kwargs=None, disabled=False, label_visibility="visible")
 
-    classlist = st.file_uploader('Upload Classlist here', type=None, accept_multiple_files=False, key=None,
-                                 help=None,
-                                 on_change=None, args=None,
-                                 kwargs=None, disabled=False, label_visibility="visible")
+pat_file = st.file_uploader('Upload PAT Files Here', type=None, accept_multiple_files=True, key=None,
+                            help=None,on_change=None, args=None,kwargs=None, disabled=False, label_visibility="visible")
 
-    submitted = st.form_submit_button("Submit")
+classlist = st.file_uploader('Upload Classlist here', type=None, accept_multiple_files=False, key=None,help=None,
+                             on_change=None, args=None,kwargs=None, disabled=False, label_visibility="visible")
 
-if submitted and classlist:
+if pat_file and classlist:
     for files in sorted(pat_file, key=lambda a: a.name):
         try:
             result = per_assessment(files, classlist, 11)
