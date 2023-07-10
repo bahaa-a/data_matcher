@@ -80,7 +80,7 @@ if pat_file and classlist:
             result = per_assessment(files, classlist, 12)
 
         col1, col2, = st.columns(2)
-        if len(result) == 1:
+        if type(result) == list:
             with col1:
                 st.error(f'Issues with {files.name} detected')
             with col2:
