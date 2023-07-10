@@ -13,7 +13,7 @@ def find_best_match(name, name_list):
     best_score = 0
     best_match = None
     for n in name_list:
-        score = SequenceMatcher(None, name, n).ratio()
+        score = SequenceMatcher(None, name.lower(), n.lower()).ratio()
         if score > best_score:
             best_score = score
             best_match = n
@@ -60,17 +60,12 @@ def per_assessment(pat_file, classlist, header):
     return listo
 
 
-
 pat_file = st.file_uploader('Upload PAT Files Here', type=None, accept_multiple_files=True, key=None,
-                                help=None,
-                                on_change=None, args=None,
-                                kwargs=None, disabled=False, label_visibility="visible")
+                            help=None, on_change=None, args=None, kwargs=None, disabled=False,
+                            label_visibility="visible")
 
-classlist = st.file_uploader('Upload Classlist here', type=None, accept_multiple_files=False, key=None,
-                                 help=None,
-                                 on_change=None, args=None,
-                                 kwargs=None, disabled=False, label_visibility="visible")
-
+classlist = st.file_uploader('Upload Classlist here', type=None, accept_multiple_files=False, key=None, help=None,
+                             on_change=None, args=None, kwargs=None, disabled=False, label_visibility="visible")
 
 if pat_file and classlist:
     for files in sorted(pat_file, key=lambda a: a.name):
@@ -97,6 +92,9 @@ if pat_file and classlist:
                 dataframe_format = pd.read_excel('temp_ppts/output.xlsx', header=None)
                 dataframe_information = pd.read_excel('temp_ppts/output2.xlsx', header=None)
                 final_concat = pd.concat([dataframe_information, dataframe_format], axis=0)
+                date_columns = final_concat.select_dtypes(include='datetime').columns
+                for column in date_columns:
+                    final_concat[column] = final_concat[column].dt.strftime('%Y-%m-%d')
                 with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
                     final_concat.to_excel(writer, sheet_name='Sheet1', index=False, header=None)
                     writer.close()
