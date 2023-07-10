@@ -30,8 +30,8 @@ def per_assessment(pat_file, classlist, header):
     listo = []
     changes = []
     for i, row in assessment_df.iterrows():
-        student_name = row['Given name'].title() + ' ' + row['Family name'].title()
-        matching_names = students_df['First Name'] + ' ' + students_df['Last Name']
+        student_name = row['Given name'].lower() + ' ' + row['Family name'].lower()
+        matching_names = students_df['First Name'].lower() + ' ' + students_df['Last Name'].lower()
         matching_name = find_best_match(student_name, matching_names)
 
         if matching_name:
