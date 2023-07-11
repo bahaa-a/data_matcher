@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from difflib import SequenceMatcher
 import io
+import os
 
 st.set_page_config(page_title='Data Matcher', page_icon=':computer:', layout='centered')
 st.title("Assessment Data Matcher")
@@ -93,8 +94,6 @@ if pat_file and classlist:
                 dataframe_information = pd.read_excel('temp_ppts/output2.xlsx', header=None)
                 final_concat = pd.concat([dataframe_information, dataframe_format], axis=0)
                 date_columns = final_concat.select_dtypes(include='datetime').columns
-                for column in date_columns:
-                    final_concat[column] = final_concat[column].dt.strftime('%Y-%m-%d')
                 with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
                     final_concat.to_excel(writer, sheet_name='Sheet1', index=False, header=None)
                     writer.close()
@@ -103,4 +102,6 @@ if pat_file and classlist:
                         data=buffer,
                         file_name=files.name,
                         mime="application/vnd.ms-excel")
+                for file in os.listdir('temp_ppts'):
+                    os.remove(f'temp_ppts/{file}')
             st.write('---')
