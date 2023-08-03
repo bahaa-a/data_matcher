@@ -68,14 +68,16 @@ pat_file = st.file_uploader('Upload PAT Files Here', type=None, accept_multiple_
 classlist = st.file_uploader('Upload Classlist here', type=None, accept_multiple_files=False, key=None, help=None,
                              on_change=None, args=None, kwargs=None, disabled=False, label_visibility="visible")
 
+# ... (previous code)
+
 if pat_file and classlist:
-    for files in sorted(pat_file, key=lambda a: a.name):
+    for i, files in enumerate(sorted(pat_file, key=lambda a: a.name)):
         try:
             result = per_assessment(files, classlist, 11)
         except:
             result = per_assessment(files, classlist, 12)
 
-        col1, col2, = st.columns(2)
+        col1, col2 = st.columns(2)
         if type(result) == list:
             with col1:
                 st.error(f'Issues with {files.name} detected')
@@ -88,12 +90,18 @@ if pat_file and classlist:
                 else:
                     st.warning(result[2])
             with col2:
-                result[0].to_excel('temp_ppts/output.xlsx', index=False, header=None)
-                result[1].to_excel('temp_ppts/output2.xlsx', index=False, header=None)
-                dataframe_format = pd.read_excel('temp_ppts/output.xlsx', header=None)
-                dataframe_information = pd.read_excel('temp_ppts/output2.xlsx', header=None)
+                output_filename = f'temp_ppts/output_{i}.xlsx'  # Unique file name
+                output2_filename = f'temp_ppts/output2_{i}.xlsx'  # Unique file name
+                result[0].to_excel(output_filename, index=False, header=None)
+                result[1].to_excel(output2_filename, index=False, header=None)
+                dataframe_format = pd.read_excel(output_filename, header=None)
+                dataframe_information = pd.read_excel(output2_filename, header=None)
                 final_concat = pd.concat([dataframe_information, dataframe_format], axis=0)
                 date_columns = final_concat.select_dtypes(include='datetime').columns
+
+                # Reset buffer position
+                buffer.seek(0)
+                
                 with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
                     final_concat.to_excel(writer, sheet_name='Sheet1', index=False, header=None)
                     writer.close()
@@ -102,6 +110,10 @@ if pat_file and classlist:
                         data=buffer,
                         file_name=files.name,
                         mime="application/vnd.ms-excel")
-                for file in os.listdir('temp_ppts'):
-                    os.remove(f'temp_ppts/{file}')
+                
+                # Delete temporary files
+                os.remove(output_filename)
+                os.remove(output2_filename)
+                
             st.write('---')
+
